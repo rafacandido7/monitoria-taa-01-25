@@ -1,0 +1,6 @@
+Makefile
+*.o
+main
+.clang-format
+.editorconfig
+.DS_Store

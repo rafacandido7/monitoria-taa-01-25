@@ -1,0 +1,76 @@
+CXX = g++
+LDFLAGS =
+BLDDIR = .
+OBJDIR = $(BLDDIR)/obj
+ARGDIR = $(BLDDIR)/args
+CXXFLAGS = -c -Wall -g
+SRC = $(wildcard $(BLDDIR)/*.cpp)
+OBJ = $(patsubst $(BLDDIR)/%.cpp, $(OBJDIR)/%.o, $(SRC))
+EXE = main
+
+.PHONY: all clean
+
+all: clean $(EXE) run compare
+
+$(EXE): $(OBJ)
+	$(CXX) $(LDFLAGS) $(OBJ) -o $(EXE)
+
+$(OBJDIR)/%.o : $(BLDDIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+clean:
+	-rm -f $(OBJDIR)/*.o $(EXE)
+
+run:
+	./$(EXE) < $(ARGDIR)/input > $(ARGDIR)/output
+
+compare:
+	diff -p $(ARGDIR)/output $(ARGDIR)/expected
+
+build:
+	@echo "\033[1;34mBuilding Folder Structure...\033[0m"
+	@mkdir -p $(BLDDIR)
+	@echo "#include <bits/stdc++.h>" > $(BLDDIR)/main.cpp
+	@echo "" >> $(BLDDIR)/main.cpp
+	@echo "using namespace std;" >> $(BLDDIR)/main.cpp
+	@echo "" >> $(BLDDIR)/main.cpp
+	@echo "int main() {" >> $(BLDDIR)/main.cpp
+	@echo "  ios_base::sync_with_stdio(false);" >> $(BLDDIR)/main.cpp
+	@echo "  cin.tie(NULL);" >> $(BLDDIR)/main.cpp
+	@echo "  cout.tie(NULL);" >> $(BLDDIR)/main.cpp
+	@echo "" >> $(BLDDIR)/main.cpp
+	@echo "  return 0;" >> $(BLDDIR)/main.cpp
+	@echo "}" >> $(BLDDIR)/main.cpp
+	@echo ""
+	@echo "\033[1;34mBuilding .editorconfig and .clang-format...\033[0m"
+	@echo ""
+	@echo "root = true" > .editorconfig
+	@echo "" >> .editorconfig
+	@echo "[*]" >> .editorconfig
+	@echo "indent_style = space" >> .editorconfig
+	@echo "indent_size = 2" >> .editorconfig
+	@echo "end_of_line = lf" >> .editorconfig
+	@echo "charset = utf-8" >> .editorconfig
+	@echo "trim_trailing_whitespace = true" >> .editorconfig
+	@echo "insert_final_newline = true" >> .editorconfig
+	@echo "BasedOnStyle: LLVM" > .clang-format
+	@echo "IndentWidth: 2" >> .clang-format
+	@echo "UseTab: Never" >> .clang-format
+	@echo "\033[1;34mBuilding arguments folder ...\033[0m"
+	@mkdir -p $(ARGDIR)
+	@echo "" >> $(ARGDIR)/input
+	@echo "" >> $(ARGDIR)/expected
+	@echo ""
+
+	@echo "\033[1;32mBuilded!\033[0m"
+
+ignore:
+	@echo "\033[1;34mBuilding .gitignore...\033[0m"
+	@echo ""
+	@echo "obj" > .gitignore
+	@echo "args" >> .gitignore
+	@echo "$(EXE)" >> .gitignore
+	@echo ".editorconfig" >> .gitignore
+	@echo ".clang-format" >> .gitignore
+	@echo "Makefile" >> .gitignore
